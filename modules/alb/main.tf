@@ -1,11 +1,24 @@
 resource "aws_security_group" "alb" {
   name_prefix = "${var.name_prefix}-alb-"
-  description = "ALB security group; inbound access disabled."
+  description = "ALB access from approved public CIDRs."
   vpc_id      = var.vpc_id
 
   tags = merge(var.tags, {
     Name = "${var.name_prefix}-alb-sg"
   })
+}
+
+resource "aws_vpc_security_group_ingress_rule" "http" {
+  for_each = toset(var.allowed_ingress_cidrs)
+
+  security_group_id = aws_security_group.alb.id
+  description       = "HTTP from approved sources, including on-premise Traefik mirroring."
+  cidr_ipv4         = each.value
+  ip_protocol       = "tcp"
+  from_port         = 80
+  to_port           = 80
+
+  tags = var.tags
 }
 
 resource "aws_lb" "this" {

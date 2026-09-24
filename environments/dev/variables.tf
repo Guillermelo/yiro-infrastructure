@@ -1,3 +1,9 @@
+variable "allowed_ingress_cidrs" {
+  description = "Approved public IPv4 CIDRs for ALB access."
+  type        = list(string)
+  default     = []
+}
+
 variable "alb_domain_name" {
   description = "ALB certificate domain name."
   type        = string
@@ -37,4 +43,16 @@ variable "additional_tags" {
   description = "Additional environment resource tags."
   type        = map(string)
   default     = {}
+}
+
+variable "backend_instance_type" {
+  description = "EC2 instance type for the backend ASG."
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "sockets_instance_type" {
+  description = "EC2 instance type for the sockets ASG."
+  type        = string
+  default     = "t3.micro"
 }

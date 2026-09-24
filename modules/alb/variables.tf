@@ -1,3 +1,16 @@
+variable "allowed_ingress_cidrs" {
+  description = "Approved public IPv4 CIDRs, including the on-premise Traefik proxy."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for cidr in var.allowed_ingress_cidrs : can(cidrnetmask(cidr))
+    ])
+    error_message = "Each entry must be a valid IPv4 CIDR."
+  }
+}
+
 variable "domain_name" {
   description = "ALB certificate domain name."
   type        = string

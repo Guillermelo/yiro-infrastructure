@@ -7,6 +7,9 @@ availability_zones = ["us-east-1a", "us-east-1b"]
 
 alb_domain_name = "migration.example.com"
 
+# Add approved public egress IPs as /32 CIDRs.
+allowed_ingress_cidrs = []
+
 backend_health_check_path = "/health"
 sockets_health_check_path = "/health"
 

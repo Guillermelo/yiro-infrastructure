@@ -79,6 +79,7 @@ resource "aws_subnet" "private_data" {
   })
 }
 
+
 # Automatic RNAT: AWS manages IPs and AZ coverage.
 resource "aws_nat_gateway" "this" {
   vpc_id            = aws_vpc.this.id
