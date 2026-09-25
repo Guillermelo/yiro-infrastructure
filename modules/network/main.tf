@@ -80,11 +80,37 @@ resource "aws_subnet" "private_data" {
 }
 
 
-# Automatic RNAT: AWS manages IPs and AZ coverage.
+# One Fixed EIP for each configured AZ
+resource "aws_eip" "regional_nat" {
+  for_each = {
+    for index, az in var.availability_zones : tostring(index) => az
+  }
+
+  domain = "vpc"
+  tags = merge(var.tags, {
+    Name             = "${var.project_name}-${var.environment}-rnat-${each.value}-eip"
+    Environment      = var.environment
+    AvailabilityZone = each.value
+  })
+}
+
+# Manual RNAT: fixed EIPs explicitly assigned per AZ.
 resource "aws_nat_gateway" "this" {
   vpc_id            = aws_vpc.this.id
   availability_mode = "regional"
   connectivity_type = "public"
+
+  dynamic "availability_zone_address" {
+    for_each = {
+      for index, az in var.availability_zones : tostring(index) => az
+    }
+    content {
+      availability_zone = availability_zone_address.value
+      allocation_ids = [
+        aws_eip.regional_nat[availability_zone_address.key].id
+      ]
+    }
+  }
 
   tags = merge(var.tags, {
     Name        = "${var.project_name}-${var.environment}-rnat"
