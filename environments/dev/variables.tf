@@ -56,3 +56,21 @@ variable "sockets_instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+variable "cache_node_type" {
+  description = "ElastiCache node type for Redis."
+  type        = string
+  default     = "cache.t4g.micro"
+}
+
+variable "cache_engine_version" {
+  description = "Redis engine version for ElastiCache."
+  type        = string
+  default     = "7.1"
+}
+
+variable "cache_snapshot_retention_limit" {
+  description = "Number of days to retain Redis snapshots."
+  type        = number
+  default     = 7
+}

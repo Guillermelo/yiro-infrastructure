@@ -69,3 +69,21 @@ module "sockets_asg" {
 
   tags = module.project_metadata.tags
 }
+
+module "cache" {
+  source = "../../modules/cache"
+
+  name_prefix = "${module.project_metadata.name_prefix}-cache"
+  vpc_id      = module.network.vpc_id
+  subnet_ids  = module.network.private_data_subnet_ids
+
+  allowed_security_group_ids = {
+    backend = module.backend_asg.security_group_id
+    sockets = module.sockets_asg.security_group_id
+  }
+  node_type                = var.cache_node_type
+  engine_version           = var.cache_engine_version
+  snapshot_retention_limit = var.cache_snapshot_retention_limit
+
+  tags = module.project_metadata.tags
+}
